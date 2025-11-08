@@ -15,17 +15,21 @@ void printBoard(const vector<vector<int>>& board, int N) {
 // Function to check if placing a queen at (row, col) is safe
 bool isSafe(const vector<vector<int>>& board, int row, int col, int N) {
     // Check same column
-    for (int i = 0; i < row; i++)
-        if (board[i][col] == 1) return false;
+    for (int i = 0; i < N; i++)
+        if (board[i][col] == 1 && i != row) return false;
 
-    // Check upper-left diagonal
-    for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
-        if (board[i][j] == 1) return false;
+    // Check all diagonals
+    // upper-left & lower-right
+    for (int i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j] == 1 && !(i == row && j == col)) return false;
+    for (int i = row, j = col; i < N && j < N; i++, j++)
+        if (board[i][j] == 1 && !(i == row && j == col)) return false;
 
-    // Check upper-right diagonal
-    for (int i = row - 1, j = col + 1; i >= 0 && j < N; i--, j++)
-        if (board[i][j] == 1) return false;
-
+    // upper-right & lower-left
+    for (int i = row, j = col; i >= 0 && j < N; i--, j++)
+        if (board[i][j] == 1 && !(i == row && j == col)) return false;
+    for (int i = row, j = col; i < N && j >= 0; i++, j--)
+        if (board[i][j] == 1 && !(i == row && j == col)) return false;
     return true;
 }
 
