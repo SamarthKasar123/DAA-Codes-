@@ -1,47 +1,64 @@
-#include <bits/stdc++.h>
-
+#include <iostream>
+#include <algorithm>
 using namespace std;
 
+// Structure to store item details
 struct Item {
-   int value;
-   int weight;
+    float value, weight;
 };
-class Solution {
-   public:
-      bool static comp(Item a, Item b) {
-         double r1 = (double) a.value / (double) a.weight;
-         double r2 = (double) b.value / (double) b.weight;
-         return r1 > r2;
-      }
-   // function to return fractionalweights
-   double fractionalKnapsack(int W, Item arr[], int n) {
 
-      sort(arr, arr + n, comp);
+// Compare function to sort items by value/weight ratio (in descending order)
+bool cmp(Item a, Item b) {
+    return (a.value / a.weight) > (b.value / b.weight);
+}
 
-      int curWeight = 0;
-      double finalvalue = 0.0;
+// Function to calculate maximum value for fractional knapsack
+float fractionalKnapsack(int W, Item arr[], int n) {
+    // Step 1: Sort items by ratio
+    sort(arr, arr + n, cmp);
 
-      for (int i = 0; i < n; i++) {
+    float finalValue = 0.0; // To store final result
 
-         if (curWeight + arr[i].weight <= W) {
-            curWeight += arr[i].weight;
-            finalvalue += arr[i].value;
-         } else {
-            int remain = W - curWeight;
-            finalvalue += (arr[i].value / (double) arr[i].weight) * (double) remain;
-            break;
-         }
-      }
+    // Step 2: Iterate through items
+    for (int i = 0; i < n; i++) {
+        if (arr[i].weight <= W) {
+            // If the item can fit completely
+            W -= arr[i].weight;
+            finalValue += arr[i].value;
+        } else {
+            // If only a fraction can be taken
+            finalValue += (arr[i].value / arr[i].weight) * W;
+            break; // Knapsack is full
+        }
+    }
 
-      return finalvalue;
+    return finalValue;
+}
 
-   }
-};
 int main() {
-   int n = 3, weight = 50;
-   Item arr[n] = { {100,20},{60,10},{120,30} };
-   Solution obj;
-   double ans = obj.fractionalKnapsack(weight, arr, n);
-   cout << "The maximum value is " << setprecision(2) << fixed << ans;
-   return 0;
+    int n;         // Number of items
+    int W;         // Knapsack capacity
+
+    cout << "Enter the number of items: ";
+    cin >> n;
+
+    Item arr[n];
+
+    cout << "Enter value and weight of each item:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Item " << i + 1 << ":\n";
+        cout << "Value: ";
+        cin >> arr[i].value;
+        cout << "Weight: ";
+        cin >> arr[i].weight;
+    }
+
+    cout << "Enter the capacity of knapsack: ";
+    cin >> W;
+
+    float maxValue = fractionalKnapsack(W, arr, n);
+
+    cout << "\nMaximum value we can obtain = " << maxValue << endl;
+
+    return 0;
 }
